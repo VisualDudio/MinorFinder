@@ -11,5 +11,7 @@ tables = soup.findAll("table", class_="sc_courselist")
 
 for table in tables:
     rows = table.findAll("tr", class_=is_course_row)
-    print(rows)
-    break
+    for row in rows:
+        cols = row.findAll("td", class_="codecol")
+        for col in cols:
+            print(col.getText())
