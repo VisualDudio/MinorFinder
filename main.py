@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
+
 def get_sites():
     page = requests.get('http://catalog.illinois.edu/undergraduate/minors/')
     soup = BeautifulSoup(page.content, 'html.parser')
@@ -13,6 +14,7 @@ def get_sites():
             sites.append(base_url + item.a.get("href"))
     return sites
 
+
 def is_course_row(css_class):
     return css_class == "even" or css_class == "odd"
 
@@ -22,7 +24,6 @@ def get_course_requirements(url):
 
     page = requests.get(url).text
     soup = BeautifulSoup(page, 'html.parser')
-    
 
     tables = soup.findAll("table", class_="sc_courselist")
     for table in tables:
@@ -37,12 +38,16 @@ def get_course_requirements(url):
                 req = req + (col.getText(),)
             if len(req) == 2:
                 courses.append(req)
-    print(courses)
-   
+    return courses
 
 
-url = "http://catalog.illinois.edu/undergraduate/las/academic-units/math/mathematics-minor/"
-get_course_requirements(url)
+def getCredit (url):
+    page = requests.get(url).text
+    soup = BeautifulSoup(page, 'html.parser')
+    search_result = soup.find("div", class_="searchresult").h2.getText()
+    search_result = search_result[search_result.find("credit: ") + len("credit: ")]
+    
+    print(search_result)
 
-
-
+url = "http://catalog.illinois.edu/search/?P=MATH%20347"
+getCredit(url)
