@@ -27,7 +27,7 @@ def get_courses(url):
             course_names.append(class_name)
             courses_list.append(course)
 
-    print(len(courses_list)) # for our viewing only 
+    #print(courses_list) # for our viewing only 
     return courses_list
 
 def format_course_name(course_name):
