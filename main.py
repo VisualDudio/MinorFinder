@@ -28,18 +28,18 @@ def get_minor_sites():
                             for title in titles:
                                 if "Minor in " in title.text:
                                     tup = ()
-                                    tup = tup + (title.text[title.text.find("Minor in ") + len("Minor in "):].replace("\xa0", " "),)
-                                    tup = tup + (base_url + title.get("href"),)
+                                    tup += (title.text[title.text.find("Minor in ") + len("Minor in "):].replace("\xa0", " "),)
+                                    tup += (base_url + title.get("href"),)
                                     sites.append(tup)
                                 elif " Minor" in title.text:
                                     tup = ()
-                                    tup = tup + (title.text[:title.text.find(" Minor") + len(" Minor")].replace("\xa0", " "),)
-                                    tup = tup + (base_url + title.get("href"),)
+                                    tup += (title.text[:title.text.find(" Minor") + len(" Minor")].replace("\xa0", " "),)
+                                    tup += (base_url + title.get("href"),)
                                     sites.append(tup)
                 else:
                     tup = ()
-                    tup = tup + (item.find('a').text,)
-                    tup = tup + (url,)
+                    tup += (item.find('a').text,)
+                    tup += (url,)
                     sites.append(tup)
     return sites
 
@@ -57,28 +57,34 @@ def get_course_requirements(site):
     page = requests.get(site[1]).text
     soup = BeautifulSoup(page, 'html.parser')
     tables = soup.findAll("table", class_="sc_courselist")
-    for table in tables:
-            rows = table.findAll("tr", class_=is_course_row)
-            for row in rows:
-                req = ()
-                cols = row.findAll("td", class_="codecol")
-                base_url = "http://catalog.illinois.edu"
-                for i, col in enumerate(cols):
-                    req = req + (site[0],)
-                    req = req + (col.getText().replace("\xa0", " "),)
-                    url = base_url + col.a.get("href")
-                    req = req + (getCredit(url),)
-                cols = row.findAll("td", class_=None)
-                for i, col in enumerate(cols):
-                    req = req + (col.getText(),)
-                if len(req) == 4:
-                    courses.append(req)
-    return courses
+    for i, table in enumerate(tables):
+        rows = table.findAll("tr", class_=is_course_row)
+        for row in rows:
+            req = ()
+            cols = row.findAll("td", class_="codecol")
+            base_url = "http://catalog.illinois.edu"
+            for j, col in enumerate(cols):
+                req += (site[0],)
+                req += (col.getText().replace("\xa0", " "),)
+                url = base_url + col.a.get("href")
+                req += (getCredit(url),)
+            cols = row.findAll("td", class_=None)
+            for j, col in enumerate(cols):
+                req += (col.getText(),)
+            if len(req) > 0:
+                courses.append(req)
+        hours = table.findAll("td", {"class": "hourscol"})
+        print(hours[len(hours) - 1])
+        # courses[i] += (hours[len(hours)],)
+        # print(courses[i])
+    # return courses
 
-list = []
-sites = get_minor_sites()
-for i, site in enumerate(sites):
-    req = get_course_requirements(site)
-    if req is not None:
-        list.append(req)
-print(list)
+print(get_course_requirements(("Agr", "http://catalog.illinois.edu/undergraduate/aces/departments/ag-cons-econ/minor-food-agribusiness-management/")))
+# sites = get_minor_sites()
+# print(sites)
+# list = []
+# for i, site in enumerate(sites):
+#     req = get_course_requirements(site)
+#     if req is not None:
+#         list.append(req)
+# print(list)
