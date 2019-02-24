@@ -64,6 +64,7 @@ def get_course_requirements(site):
     for i, table in enumerate(tables):
         rows = table.findAll("tr", class_=is_course_row)
         for row in rows:
+            split_url = site[1].split("/")
             req = ()
             cols = row.findAll("td", class_="codecol")
             base_url = "http://catalog.illinois.edu"
@@ -78,6 +79,7 @@ def get_course_requirements(site):
             cols = table.findAll("td", class_="hourscol")
             if len(cols) > 0:
                 req += (cols[len(cols) - 1].getText(),)
+            req += (split_url[4],)
             if len(req) > 0:
                 courses.append(req)
     return courses
@@ -99,3 +101,4 @@ def fixCourses(courses):
 #     if req is not None:
 #         list.append(req)
 # print(list)
+print(get_course_requirements(("lol","http://catalog.illinois.edu/undergraduate/las/academic-units/afro-am/#minortext")))
