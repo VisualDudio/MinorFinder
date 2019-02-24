@@ -1,9 +1,10 @@
 import mysql.connector
 import requiredcourses
+import math
 
 db = mysql.connector.connect(
   host="localhost",
-  user="MySQL80",
+  user="root",
   passwd="powerrow"
 )
 
@@ -32,7 +33,7 @@ db = mysql.connector.connect(
 # cursor.executemany(query2, values2)
 # db.commit()
 
-def getCoursesLeft(minor, dars):
+def getCoursesLeft(minor):
   cursor = db.cursor()
   courses_left = []
 
@@ -90,7 +91,23 @@ def getCoursesLeft(minor, dars):
     return (courses_left, hours_left)
 
 
-  
+def get_top_minors(courses):
+    for course in courses:
+        sql = "INSERT INTO dars VALUES(%s,%s,%d,%s)" %course
+        cursor.execute(sql)
+        temp = cursor.fetchall()
+    
+    cursor.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'ADULT DEVELOPMENT' AND TABLE_SCHEMA='mydatabaselol' ")
+    minors = cursor.fetchall()
+    result = {}
+    for minor in minors:
+        minor_tuple = getCoursesLeft(minor)
+        eucl_d = math.sqrt(len(courses_left)**2 + hours_left**2)
+        result[minor] = eucl_d
+
+    sorted(result.items(), key=lambda x: (-x[1], x[0]))
+    top_minors = list(result.keys())
+    return top_minors
 
 
 

@@ -25,7 +25,7 @@ def get_courses():
             course_names.append(class_name)
             courses_list.append(course)
 
-    print(len(courses_list)) # for our viewing only 
+    #print(courses_list) # for our viewing only 
     return courses_list
 
 def format_course_name(course_name):
@@ -38,7 +38,7 @@ def format_course_name(course_name):
 # soup = BeautifulSoup(page.content, 'html.parser')
 # print(get_courses())
 
-file = open("omar_DARS.html")
+file = open("test.html")
 soup = BeautifulSoup(file, features="html.parser")
 get_courses()
 file.close()
