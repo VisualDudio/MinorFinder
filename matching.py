@@ -8,6 +8,7 @@ db = mysql.connector.connect(
   passwd="powerrow"
 )
 
+
 # cursor.execute("CREATE TABLE dars (COURSENAME VARCHAR (255) NOT NULL, GRADE VARCHAR (255) NOT NULL, CREDITHOURS INT NOT NULL, TERM VARCHAR (255))")
 # values = [
 #     ('MATH 125', 'IP', 3, 'SP 19'),
@@ -92,11 +93,16 @@ def getCoursesLeft(minor):
 
 
 def get_top_minors(courses):
+    cursor = db.cursor()
+    cursor.execute("USE mydatabaselol")
     for course in courses:
-        sql = "INSERT INTO dars VALUES(%s,%s,%d,%s)" %course
-        cursor.execute(sql)
-        temp = cursor.fetchall()
+        cursor.execute("INSERT INTO dars VALUES (%s,%s,%s,%s)", course)
+        #temp = cursor.fetchall()
     
+    number_of_rows = cursor.execute("SELECT * FROM dars") 
+    for i in range (number_of_rows):
+        print (row[i])
+
     cursor.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'ADULT DEVELOPMENT' AND TABLE_SCHEMA='mydatabaselol' ")
     minors = cursor.fetchall()
     result = {}
