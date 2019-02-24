@@ -43,8 +43,10 @@ def get_minor_sites():
                     sites.append(tup)
     return sites
 
+
 def is_course_row(css_class):
     return css_class == "even" or css_class == "odd"
+
 
 def getCredit(url):
     page = requests.get(url).text
@@ -52,11 +54,16 @@ def getCredit(url):
     search_result = soup.find("div", class_="searchresult").h2.getText()
     return search_result[search_result.find("credit: ") + len("credit: ")]
 
+
 def get_course_requirements(site):
     courses = []
     page = requests.get(site[1]).text
     soup = BeautifulSoup(page, 'html.parser')
-    tables = soup.findAll("table", class_="sc_courselist")
+    div = soup.find(id="minortextcontainer")
+    if div is None:
+        tables = soup.findAll("table", class_="sc_courselist")
+    else:
+        tables = div.findAll("table", class_="sc_courselist")
     for i, table in enumerate(tables):
         rows = table.findAll("tr", class_=is_course_row)
         for row in rows:
@@ -71,18 +78,27 @@ def get_course_requirements(site):
             cols = row.findAll("td", class_=None)
             for j, col in enumerate(cols):
                 req += (col.getText(),)
+            cols = table.findAll("td", class_="hourscol")
+            if len(cols) > 0:
+                req += (cols[len(cols) - 1].getText(),)
             if len(req) > 0:
                 courses.append(req)
-        hours = table.findAll("td", {"class": "hourscol"})
-        print(hours[len(hours) - 1])
-        # courses[i] += (hours[len(hours)],)
-        # print(courses[i])
-    # return courses
+    return courses
 
-print(get_course_requirements(("Agr", "http://catalog.illinois.edu/undergraduate/aces/departments/ag-cons-econ/minor-food-agribusiness-management/")))
-# sites = get_minor_sites()
-# print(sites)
+def fixCourses(courses):
+    for core in courses:
+        if (core == courses[0] and len(core) == 4):
+            core = core + (1,)
+        elif (len(core) < 4):
+            if "foundation" in core[0]:
+                core = core + (1,)
+            else:
+                core = core + (0,)
+
+print(get_course_requirements(("hello", "http://catalog.illinois.edu/undergraduate/aces/departments/ag-cons-econ/minor-food-agribusiness-management/")))
+
 # list = []
+# sites = get_minor_sites()
 # for i, site in enumerate(sites):
 #     req = get_course_requirements(site)
 #     if req is not None:
