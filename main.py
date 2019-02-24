@@ -95,8 +95,6 @@ def fixCourses(courses):
             else:
                 core = core + (0,)
 
-print(get_course_requirements(("hello", "http://catalog.illinois.edu/undergraduate/aces/departments/ag-cons-econ/minor-food-agribusiness-management/")))
-
 # list = []
 # sites = get_minor_sites()
 # for i, site in enumerate(sites):
