@@ -17,30 +17,39 @@ def get_minor_sites():
                 url = base_url + item.a.get("href")
                 subpage = requests.get(url)
                 content = BeautifulSoup(subpage.content, 'html5lib')
-                lambda tag: tag.name == 'div' and tag.get('class') == ['info-section']
                 links = content.find(lambda tag: tag.name == 'div' and (tag.get('id') == 'minortextcontainer' or tag.get('id') == 'minorstextcontainer'))
                 if links is not None:
                     for link in links:
                         if isinstance(link, NavigableString):
                             continue
                         else:
-                            titles = link.findAll('a', href=True)
-                            for title in titles:
-                                if "Minor in " in title.text:
-                                    tup = ()
-                                    tup += (title.text[title.text.find("Minor in ") + len("Minor in "):].replace("\xa0", " "),)
-                                    tup += (base_url + title.get("href"),)
-                                    sites.append(tup)
-                                elif " Minor" in title.text:
-                                    tup = ()
-                                    tup += (title.text[:title.text.find(" Minor") + len(" Minor")].replace("\xa0", " "),)
-                                    tup += (base_url + title.get("href"),)
-                                    sites.append(tup)
+                            tables = content.findAll("table", class_="sc_courselist")
+                            if tables is not None:
+                                tup = ()
+                                tup += (item.find('a').text,)
+                                tup += (url,)
+                                sites.append(tup)
+                                break
+                            else:
+                                titles = link.findAll('a', href=True)
+                                for title in titles:
+                                    if "Minor in " in title.text:
+                                        tup = ()
+                                        tup += (title.text[title.text.find("Minor in ") + len("Minor in "):].replace("\xa0", " "),)
+                                        tup += (base_url + title.get("href"),)
+                                        sites.append(tup)
+                                    elif " Minor" in title.text:
+                                        tup = ()
+                                        tup += (title.text[:title.text.find(" Minor") + len(" Minor")].replace("\xa0", " "),)
+                                        tup += (base_url + title.get("href"),)
+                                        sites.append(tup)
                 else:
-                    tup = ()
-                    tup += (item.find('a').text,)
-                    tup += (url,)
-                    sites.append(tup)
+                    tables = content.findAll("table", class_="sc_courselist")
+                    if tables is not None:
+                        tup = ()
+                        tup += (item.find('a').text,)
+                        tup += (url,)
+                        sites.append(tup)
     return sites
 
 def is_course_row(css_class):
@@ -93,8 +102,7 @@ def fixCourses(courses):
                 core = core + (0,)
 
 # list = []
-sites = get_minor_sites()
-print(sites)
+# sites = get_minor_sites()
 # for i, site in enumerate(sites):
 #     req = get_course_requirements(site)
 #     if req is not None:
