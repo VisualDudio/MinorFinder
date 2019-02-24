@@ -43,17 +43,14 @@ def get_minor_sites():
                     sites.append(tup)
     return sites
 
-
 def is_course_row(css_class):
     return css_class == "even" or css_class == "odd"
-
 
 def getCredit(url):
     page = requests.get(url).text
     soup = BeautifulSoup(page, 'html.parser')
     search_result = soup.find("div", class_="searchresult").h2.getText()
     return search_result[search_result.find("credit: ") + len("credit: ")]
-
 
 def get_course_requirements(site):
     courses = []
