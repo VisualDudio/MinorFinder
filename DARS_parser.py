@@ -5,9 +5,11 @@ import urllib3
 import csv
 import re
 
-def get_courses():
+def get_courses(url):
+    file = open(url)
+    soup = BeautifulSoup(file, features="html.parser")
+
     courses_list = []
-    #temp_list = []
     course_names = []
     all_courses = soup.findAll("tr", class_="takenCourse")
 
@@ -37,8 +39,3 @@ def format_course_name(course_name):
 # page = requests.get("https://uachieve.apps.uillinois.edu/uachieve_uiuc/audit/read.html")
 # soup = BeautifulSoup(page.content, 'html.parser')
 # print(get_courses())
-
-file = open("test.html")
-soup = BeautifulSoup(file, features="html.parser")
-get_courses()
-file.close()
