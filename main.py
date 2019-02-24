@@ -55,7 +55,7 @@ def get_minor_sites():
 def is_course_row(css_class):
     return css_class == "even" or css_class == "odd"
 
-def getCredit(url):
+def get_credit(url):
     page = requests.get(url).text
     soup = BeautifulSoup(page, 'html.parser')
     search_result = soup.find("div", class_="searchresult").h2.getText()
@@ -81,7 +81,7 @@ def get_course_requirements(site):
                 req += (site[0],)
                 req += (col.getText().replace("\xa0", " "),)
                 url = base_url + col.a.get("href")
-                req += (getCredit(url),)
+                req += (get_credit(url),)
             cols = row.findAll("td", class_=None)
             for j, col in enumerate(cols):
                 req += (col.getText(),)
@@ -93,7 +93,7 @@ def get_course_requirements(site):
                 courses.append(req)
     return courses
 
-def fixCourses(courses):
+def fix_courses(courses):
     for core in courses:
         if (core == courses[0] and len(core) == 4):
             core = core + (1,)
@@ -106,8 +106,7 @@ def fixCourses(courses):
 # list = []
 # sites = get_minor_sites()
 # for i, site in enumerate(sites):
-#     req = get_course_requirements(site)
+#     req = fix_course(get_course_requirements(site))
 #     if req is not None:
 #         list.append(req)
 # print(list)
-print(get_course_requirements(("lol","http://catalog.illinois.edu/undergraduate/las/academic-units/afro-am/#minortext")))
