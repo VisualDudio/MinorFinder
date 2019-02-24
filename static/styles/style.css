@@ -1,0 +1,28 @@
+.row {
+    display: flex;
+    justify-content: right;
+
+}
+
+#minors {
+    overflow: scroll;
+    height: 450px;
+}
+
+.btn {
+  border: none;
+  outline: none;
+  margin-bottom: 3px;
+  padding: 10px 16px;
+  display: block;
+  width: 200px;
+  background-color: #f1f1f1;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* Style the active class, and buttons on mouse-over */
+.active, .btn:hover {
+  background-color: #666;
+  color: white;
+}
