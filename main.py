@@ -93,7 +93,8 @@ def fixCourses(courses):
                 core = core + (0,)
 
 # list = []
-# sites = get_minor_sites()
+sites = get_minor_sites()
+print(sites)
 # for i, site in enumerate(sites):
 #     req = get_course_requirements(site)
 #     if req is not None:
