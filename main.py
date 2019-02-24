@@ -1,21 +1,46 @@
 import requests
 from bs4 import BeautifulSoup
-
+from bs4 import NavigableString
 
 def get_minor_sites():
     page = requests.get('http://catalog.illinois.edu/undergraduate/minors/')
-    soup = BeautifulSoup(page.content, 'html.parser')
+    soup = BeautifulSoup(page.content, 'lxml')
     sites = []
     base_url = "http://catalog.illinois.edu"
-    table = soup.findAll("div", {"class": "tab_content"})
-
+    table = soup.find("div", {"id": "textcontainer"})
     for rows in table:
-        items = rows.findAll("li")
-        for item in items:
-            tup = ()
-            tup = tup + (item.find('a').text,)
-            tup = tup + (base_url + item.a.get("href"),)
-            sites.append(tup)
+        if isinstance(rows, NavigableString):
+            continue
+        else:
+            items = rows.findAll("li")
+            for item in items:
+                url = base_url + item.a.get("href")
+                subpage = requests.get(url)
+                content = BeautifulSoup(subpage.content, 'html5lib')
+                lambda tag: tag.name == 'div' and tag.get('class') == ['info-section']
+                links = content.find(lambda tag: tag.name == 'div' and (tag.get('id') == 'minortextcontainer' or tag.get('id') == 'minorstextcontainer'))
+                if links is not None:
+                    for link in links:
+                        if isinstance(link, NavigableString):
+                            continue
+                        else:
+                            titles = link.findAll('a', href=True)
+                            for title in titles:
+                                if "Minor in " in title.text:
+                                    tup = ()
+                                    tup = tup + (title.text[title.text.find("Minor in ") + len("Minor in "):].replace("\xa0", " "),)
+                                    tup = tup + (base_url + title.get("href"),)
+                                    sites.append(tup)
+                                elif " Minor" in title.text:
+                                    tup = ()
+                                    tup = tup + (title.text[:title.text.find(" Minor") + len(" Minor")].replace("\xa0", " "),)
+                                    tup = tup + (base_url + title.get("href"),)
+                                    sites.append(tup)
+                else:
+                    tup = ()
+                    tup = tup + (item.find('a').text,)
+                    tup = tup + (url,)
+                    sites.append(tup)
     return sites
 
 
